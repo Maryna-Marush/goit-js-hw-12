@@ -17,16 +17,14 @@ const loadMoreBtn = document.querySelector('.load-more-btn');
 let query = '';
 let page = 1;
 let totalHits = 0;
-const perPage = 15; // Количество элементов на одну страницу
+const perPage = 15; 
 
 searchForm.addEventListener('submit', handleSearch);
 if (loadMoreBtn) {
   loadMoreBtn.addEventListener('click', handleLoadMore);
 }
 
-/**
- * Первый поиск по сабмиту
- */
+
 async function handleSearch(event) {
   event.preventDefault();
 
@@ -62,13 +60,11 @@ async function handleSearch(event) {
 
     createGallery(data.hits);
 
-    // ПРОВЕРКА ДЛЯ 1-й СТРАНИЦЫ: 
-    // Если общее количество на бекенде (totalHits) больше, чем мы загрузили за раз (15),
-    // значит, есть что загружать дальше — показываем кнопку. Иначе — кнопка остается скрытой.
+    
     if (totalHits > perPage) {
       showLoadMoreButton();
     } else {
-      // Если это конец коллекции уже на первой странице, показываем уведомление
+      
       iziToast.info({
         title: 'Info',
         message: "We're sorry, but you've reached the end of search results.",
@@ -89,19 +85,17 @@ async function handleSearch(event) {
   }
 }
 
-/**
- * Клик на кнопку "Load more"
- */
+
 async function handleLoadMore() {
   page += 1; 
-  hideLoadMoreButton(); // Прячем кнопку, пока идет загрузка
+  hideLoadMoreButton(); 
   showLoader(); 
 
   try {
     const data = await getImagesByQuery(query, page);
     createGallery(data.hits);
 
-    // Плавный скролл
+
     const galleryItem = document.querySelector('.gallery-item');
     if (galleryItem) {
       const { height: cardHeight } = galleryItem.getBoundingClientRect();
@@ -111,20 +105,19 @@ async function handleLoadMore() {
       });
     }
 
-    // ПРОВЕРКА ДЛЯ ПОСЛЕДУЮЩИХ СТРАНИЦ:
-    // Считаем, сколько картинок мы уже теоретически должны были загрузить
+   
     const totalLoadedImages = page * perPage;
 
-    // Если то, что мы загрузили, покрывает или превышает totalHits бекенда — коллекция закончилась
+    
     if (totalLoadedImages >= totalHits) {
-      hideLoadMoreButton(); // Убеждаемся, что кнопка скрыта
+      hideLoadMoreButton(); 
       iziToast.info({
         title: 'Info',
         message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight',
       });
     } else {
-      showLoadMoreButton(); // Если картинки еще есть, возвращаем кнопку
+      showLoadMoreButton();
     }
 
   } catch (error) {
